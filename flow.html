@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow State Parkour Studio - 跑酷流暢度極致修煉場</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lavender: {
+                            50: '#fbf9fc',
+                            100: '#f4f0f8',
+                            200: '#e8e0f0',
+                            300: '#dcd3e8',
+                            400: '#b8a6d4',
+                            500: '#8d72b8',
+                            600: '#7558a3',
+                            700: '#5e438a',
+                            800: '#48326e',
+                            900: '#2d2438',
+                        },
+                        slatePurple: '#2d2438',
+                        accentPurple: '#8d72b8',
+                        brightLilac: '#a084ca',
+                        softBg: '#f4f0f8',
+                        cardBg: '#ffffff'
+                    },
+                    fontFamily: {
+                        pixel: ['Silkscreen', 'cursive'],
+                        sans: ['Outfit', 'Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            background-color: #f4f0f8;
+            color: #2d2438;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .font-pixel { font-family: 'Silkscreen', cursive; }
+
+        canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .purple-card {
+            background-color: #ffffff;
+            border: 2px solid #dcd3e8;
+            box-shadow: 4px 4px 0px #b8a6d4;
+            border-radius: 20px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .purple-card:hover {
+            box-shadow: 6px 6px 0px #8d72b8;
+            transform: translateY(-2px);
+        }
+
+        .pixel-btn {
+            border: 2px solid #2d2438;
+            box-shadow: 3px 3px 0px #8d72b8;
+            transition: all 0.15s ease-out;
+        }
+
+        .pixel-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px #5e438a;
+        }
+
+        .pixel-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px #2d2438;
+        }
+
+        .tab-btn.active {
+            background-color: #8d72b8;
+            color: #ffffff;
+            border-color: #2d2438;
+            box-shadow: 0px 4px 12px rgba(141, 114, 184, 0.35);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f4f0f8; }
+        ::-webkit-scrollbar-thumb { background: #b8a6d4; border-radius: 4px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-lavender-300 selection:text-slatePurple">
+
+    <!-- Toast Notification Popup -->
+    <div id="toast-notify" class="fixed top-20 left-1/2 -translate-x-1/2 bg-slatePurple text-lavender-50 px-6 py-3 rounded-full font-bold font-pixel text-xs z-50 shadow-xl border-2 border-lavender-300 hidden flex items-center gap-2 transition-all">
+        <span id="toast-icon">✨</span>
+        <span id="toast-msg">通知訊息</span>
+    </div>
+
+    <!-- NAVBAR HEADER -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-lavender-300 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 bg-lavender-500 border-2 border-slatePurple rounded-xl flex items-center justify-center font-pixel text-white text-xl shadow-[3px_3px_0px_#b8a6d4] group-hover:rotate-6 transition-transform">
+                    🏃
+                </div>
+                <div>
+                    <span class="font-pixel text-sm md:text-base text-slatePurple tracking-wider block">FLOW STATE</span>
+                    <span class="text-[10px] text-lavender-600 font-bold uppercase tracking-widest">Parkour Studio</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-8 text-xs font-bold text-slatePurple/80">
+                <a href="#journey" class="hover:text-accentPurple transition">📍 開發與學習歷程</a>
+                <a href="#hero" class="hover:text-accentPurple transition">🎮 街機遊戲試玩</a>
+                <a href="#physics" class="hover:text-accentPurple transition">🔬 慢動作物理講堂</a>
+                <a href="#music" class="hover:text-accentPurple transition">🎵 Chill 原聲帶</a>
+                <a href="#gallery" class="hover:text-accentPurple transition">🖼️ 可愛封面展示</a>
+            </nav>
+
+            <a href="#hero" class="pixel-btn px-4 py-2 bg-lavender-500 hover:bg-lavender-600 text-white text-xs font-bold rounded-xl flex items-center gap-1.5">
+                <span>🚀 立即體驗平台</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="space-y-20 pb-16">
+
+        <!-- HERO SHOWCASE & EMBEDDED ARCADE GAME -->
+        <section id="hero" class="pt-8 px-4 max-w-7xl mx-auto">
+            <div class="purple-card p-6 md:p-10 space-y-8 bg-gradient-to-br from-white via-lavender-50 to-lavender-100/60">
+                
+                <!-- Hero Header Titles -->
+                <div class="text-center max-w-3xl mx-auto space-y-3">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-lavender-200 text-lavender-800 text-xs font-pixel font-bold">
+                        <span>⚡ 亮色灰紫系 ‧ 5大主題關卡學習平台</span>
+                    </div>
+
+                    <h1 class="text-3xl md:text-5xl font-black text-slatePurple tracking-tight leading-tight">
+                        Flow State Parkour Studio<br>
+                        <span class="text-lavender-600 font-extrabold">跑酷流暢度極致修煉場</span>
+                    </h1>
+
+                    <p class="text-slatePurple/80 text-xs md:text-sm font-medium leading-relaxed max-w-2xl mx-auto">
+                        從克服「翻不過去」的高牆恐懼，到掌握 5 大主題關卡的流暢節奏！透過 2D 亮色像素小人、即時物理軌跡與 Chill Synth 輕音樂，幫你找回完美的運動 Flow 心流。
+                    </p>
+                </div>
+
+                <!-- 5-STAGE LEVEL SELECTION GRID -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-pixel text-lavender-700 font-bold uppercase tracking-wider">🗺️ 選擇闖關修煉場 (SELECT STAGE)</span>
+                        <span id="stageProgressText" class="text-xs font-bold text-slatePurple/70">修煉進度: 5/5 關卡已開放</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+                        <button onclick="selectStage(1)" id="stage-card-1" class="pixel-btn p-3 bg-white text-left rounded-xl border-2 border-lavender-500 shadow-sm transition hover:scale-[1.02] active">
+                            <div class="flex justify-between items-center text-[10px] font-pixel text-lavender-700 font-bold">
+                                <span>STAGE 01</span>
+                                <span id="stars-1">⭐⭐⭐</span>
+                            </div>
+                            <div class="font-black text-slatePurple text-xs mt-1 truncate">屋頂初體驗</div>
+                            <div class="text-[10px] text-slatePurple/60 font-medium mt-0.5">目標: 500分</div>
+                        </button>
+
+                        <button onclick="selectStage(2)" id="stage-card-2" class="pixel-btn p-3 bg-white text-left rounded-xl border-2 border-lavender-300 shadow-sm transition hover:scale-[1.02]">
+                            <div class="flex justify-between items-center text-[10px] font-pixel text-lavender-700 font-bold">
+                                <span>STAGE 02</span>
+                                <span id="stars-2">⭐⭐☆</span>
+                            </div>
+                            <div class="font-black text-slatePurple text-xs mt-1 truncate">霓虹暗巷過障</div>
+                            <div class="text-[10px] text-slatePurple/60 font-medium mt-0.5">目標: 1000分</div>
+                        </button>
+
+                        <button onclick="selectStage(3)" id="stage-card-3" class="pixel-btn p-3 bg-white text-left rounded-xl border-2 border-lavender-300 shadow-sm transition hover:scale-[1.02]">
+                            <div class="flex justify-between items-center text-[10px] font-pixel text-lavender-700 font-bold">
+                                <span>STAGE 03</span>
+                                <span id="stars-3">⭐☆☆</span>
+                            </div>
+                            <div class="font-black text-slatePurple text-xs mt-1 truncate">工業高空降落</div>
+                            <div class="text-[10px] text-slatePurple/60 font-medium mt-0.5">目標: 1800分</div>
+                        </button>
+
+                        <button onclick="selectStage(4)" id="stage-card-4" class="pixel-btn p-3 bg-white text-left rounded-xl border-2 border-lavender-300 shadow-sm transition hover:scale-[1.02]">
+                            <div class="flex justify-between items-center text-[10px] font-pixel text-lavender-700 font-bold">
+                                <span>STAGE 04</span>
+                                <span id="stars-4">☆☆☆</span>
+                            </div>
+                            <div class="font-black text-slatePurple text-xs mt-1 truncate">雨夜速流衝刺</div>
+                            <div class="text-[10px] text-slatePurple/60 font-medium mt-0.5">目標: 2500分</div>
+                        </button>
+
+                        <button onclick="selectStage(5)" id="stage-card-5" class="pixel-btn p-3 bg-white text-left rounded-xl border-2 border-lavender-300 shadow-sm transition hover:scale-[1.02]">
+                            <div class="flex justify-between items-center text-[10px] font-pixel text-pink-600 font-bold">
+                                <span>STAGE 05</span>
+                                <span id="stars-5">👑 BOSS</span>
+                            </div>
+                            <div class="font-black text-slatePurple text-xs mt-1 truncate">流暢大師考驗</div>
+                            <div class="text-[10px] text-slatePurple/60 font-medium mt-0.5">目標: 4000分</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- EMBEDDED LIVE ARCADE MINI-GAME -->
+                <div class="space-y-3">
+                    <div class="flex flex-wrap justify-between items-center bg-lavender-200/80 p-3 rounded-2xl border border-lavender-300 text-xs font-pixel">
+                        <div class="flex items-center gap-4">
+                            <span class="text-slatePurple">SCORE: <b id="arcadeScore" class="text-lavender-700 text-sm">0</b></span>
+                            <span class="text-slatePurple">COMBO: <b id="arcadeCombo" class="text-lavender-700 text-sm">0x</b></span>
+                            <span class="text-slatePurple hidden sm:inline">GOAL: <b id="arcadeGoal" class="text-purple-800 font-bold">500</b></span>
+                        </div>
+                        <div id="bulletTimeBadge" class="hidden text-pink-600 font-bold animate-pulse">⚡ BULLET TIME SLOW-MO ⚡</div>
+                        <div id="arcadeStageTitle" class="text-lavender-800 font-bold">STAGE 1: 屋頂初體驗</div>
+                    </div>
+
+                    <!-- Canvas Box -->
+                    <div class="relative aspect-[2/1] max-h-[440px] w-full bg-slate-900 rounded-2xl overflow-hidden border-2 border-slatePurple shadow-md">
+                        <canvas id="arcadeCanvas" width="800" height="400" class="w-full h-full block"></canvas>
+                        
+                        <!-- Drone Warning Overlay -->
+                        <div id="droneWarningOverlay" class="absolute top-3 left-3 bg-rose-950/80 text-rose-300 border border-rose-500 text-[11px] font-pixel px-3 py-1.5 rounded-xl hidden items-center gap-2 animate-pulse">
+                            <span>🚨 DRONE PURSUIT: <b id="droneDistText" class="text-white">35m</b></span>
+                        </div>
+
+                        <!-- Game Overlay Start Screen -->
+                        <div id="arcadeStartOverlay" class="absolute inset-0 bg-slatePurple/85 backdrop-blur-xs flex flex-col justify-center items-center p-6 text-center z-10 space-y-4">
+                            <div class="w-16 h-16 bg-lavender-200 text-slatePurple rounded-2xl flex items-center justify-center font-pixel text-3xl shadow-[4px_4px_0px_#8d72b8]">
+                                🏃
+                            </div>
+                            <h3 id="overlayStageTitle" class="text-xl font-black font-pixel text-white">STAGE 01: 屋頂初體驗</h3>
+                            <p id="overlayStageDesc" class="text-xs text-lavender-100 max-w-md font-medium leading-relaxed">
+                                低欄翻越與基礎跳躍，速度較慢，適合掌握翻越與落地時機。
+                            </p>
+                            <div class="grid grid-cols-2 gap-2 text-left bg-slate-950/60 p-3 rounded-xl border border-lavender-300/30 text-[11px] text-lavender-100 font-medium">
+                                <div><b class="text-lavender-300">[S / ↓]</b> 翻越 Vault</div>
+                                <div><b class="text-lavender-300">[A / ←]</b> 滾翻 Safe Roll</div>
+                                <div><b class="text-lavender-300">[D / Space]</b> 跳躍 Gap Jump</div>
+                                <div><b class="text-pink-300">[E]</b> 空翻/特技 Flip Trick</div>
+                            </div>
+                            <button onclick="startArcadeGame()" class="pixel-btn px-6 py-2.5 bg-lavender-500 hover:bg-lavender-600 text-white font-black text-xs rounded-xl">
+                                ▶ 開始闖關 (START STAGE)
+                            </button>
+                        </div>
+
+                        <!-- Level Victory Overlay -->
+                        <div id="arcadeVictoryOverlay" class="absolute inset-0 bg-slatePurple/90 backdrop-blur-xs flex flex-col justify-center items-center p-6 text-center z-10 space-y-4 hidden">
+                            <div class="text-3xl font-pixel text-yellow-300 animate-bounce">🏆 STAGE CLEAR!</div>
+                            <h3 id="victoryStageText" class="text-lg font-black font-pixel text-white">已達成關卡目標！</h3>
+                            <p class="text-xs text-lavender-100 max-w-md font-medium">
+                                恭喜展現出流暢的跑酷動能銜接！已解鎖新的星星徽章！
+                            </p>
+                            <div class="flex gap-3">
+                                <button onclick="nextStage()" class="pixel-btn px-5 py-2.5 bg-lavender-500 hover:bg-lavender-600 text-white font-black text-xs rounded-xl">
+                                    ▶ 下一關 (NEXT STAGE)
+                                </button>
+                                <button onclick="startArcadeGame()" class="pixel-btn px-5 py-2.5 bg-white text-slatePurple font-black text-xs rounded-xl">
+                                    🔄 重玩本關
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Game Over / Stumble Overlay -->
+                        <div id="arcadeGameOverOverlay" class="absolute inset-0 bg-slatePurple/90 backdrop-blur-xs flex flex-col justify-center items-center p-6 text-center z-10 space-y-3 hidden">
+                            <div class="text-xl font-pixel text-rose-400">FLOW BROKEN!</div>
+                            <h3 id="stumbleTitle" class="text-sm font-black text-white">過牆卡頓停頓！</h3>
+                            <p id="stumbleFeedback" class="text-xs text-lavender-100 bg-slate-950/60 p-3 rounded-xl border border-lavender-300/30 max-w-md font-medium text-left">
+                                翻越牆面時按鍵時機過晚。建議練習按 [S] 鍵將手掌平推牆面帶動軀幹向上拋。
+                            </p>
+                            <button onclick="startArcadeGame()" class="pixel-btn px-6 py-2.5 bg-lavender-500 hover:bg-lavender-600 text-white font-black text-xs rounded-xl">
+                                🔄 再次嘗試 (RETRY)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Game Controls Buttons -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-bold font-pixel">
+                        <button onclick="triggerGameAction('ROLL')" class="pixel-btn p-3 bg-white text-slatePurple rounded-xl border border-lavender-300">
+                            🌀 [A] 滾翻 Roll
+                        </button>
+                        <button onclick="triggerGameAction('VAULT')" class="pixel-btn p-3 bg-lavender-500 text-white rounded-xl">
+                            🤸 [S] 翻越 Vault
+                        </button>
+                        <button onclick="triggerGameAction('JUMP')" class="pixel-btn p-3 bg-lavender-700 text-white rounded-xl">
+                            🦘 [D] 跳躍 Jump
+                        </button>
+                        <button onclick="triggerGameAction('TRICK')" class="pixel-btn p-3 bg-pink-500 text-white rounded-xl">
+                            🔥 [E] 後空翻 Trick
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- JOURNEY ROADMAP (開發與學習歷程) -->
+        <section id="journey" class="max-w-7xl mx-auto px-4">
+            <div class="text-center space-y-3 mb-10">
+                <span class="text-xs font-pixel text-lavender-600 uppercase tracking-widest">DEVELOPMENT & LEARNING ROADMAP</span>
+                <h2 class="text-2xl md:text-4xl font-black text-slatePurple">從流暢卡頓到極致 Flow 的創作歷程</h2>
+                <p class="text-xs md:text-sm text-slatePurple/70 max-w-xl mx-auto">
+                    紀錄如何將實體練習的瓶頸，轉化為遊戲化學習平台與生物力學可視化介面。
+                </p>
+            </div>
+
+            <!-- Timeline Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <!-- Phase 1 -->
+                <div class="purple-card p-6 space-y-3 border-l-4 border-l-pink-500">
+                    <span class="text-xs font-pixel text-pink-600 block font-bold">PHASE 01</span>
+                    <h3 class="font-black text-slatePurple text-base">📍 障礙恐懼與銜接卡頓</h3>
+                    <p class="text-xs text-slatePurple/80 leading-relaxed">
+                        在初期練習跑酷翻越矮牆時，常卡在「翻不過去」的心理恐懼、發力方向誤區以及招式動作之間的銜接停頓。
+                    </p>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="purple-card p-6 space-y-3 border-l-4 border-l-lavender-500">
+                    <span class="text-xs font-pixel text-lavender-600 block font-bold">PHASE 02</span>
+                    <h3 class="font-black text-slatePurple text-base">📍 物理力學與軌跡拆解</h3>
+                    <p class="text-xs text-slatePurple/80 leading-relaxed">
+                        引入牛頓第三定律與生物力學：透過雙手向下按壓障礙物產生反作用力，並配合髖關節提拉，打造拋物線模擬器。
+                    </p>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="purple-card p-6 space-y-3 border-l-4 border-l-lavender-700">
+                    <span class="text-xs font-pixel text-lavender-800 block font-bold">PHASE 03</span>
+                    <h3 class="font-black text-slatePurple text-base">📍 街機遊戲化與 Suno BGM</h3>
+                    <p class="text-xs text-slatePurple/80 leading-relaxed">
+                        製作 2D 像素街機跑酷小遊戲，設計組合招式與子彈時間；搭配 Suno AI Chill Synth Pure Focus 純音樂原聲帶。
+                    </p>
+                </div>
+
+                <!-- Phase 4 -->
+                <div class="purple-card p-6 space-y-3 border-l-4 border-l-purple-600">
+                    <span class="text-xs font-pixel text-purple-700 block font-bold">PHASE 04</span>
+                    <h3 class="font-black text-slatePurple text-base">📍 亮色灰紫系展演平台</h3>
+                    <p class="text-xs text-slatePurple/80 leading-relaxed">
+                        整合可愛像素封面、一頁式介紹展演網頁與灰紫色調介面，打造優雅且極具實用價值的跑酷教學展示作品。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE PHYSICS LAB (物理與障礙軌跡模擬器) -->
+        <section id="physics" class="max-w-7xl mx-auto px-4">
+            <div class="purple-card p-6 md:p-8 space-y-6">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-lavender-200 pb-4">
+                    <div>
+                        <span class="text-xs font-pixel text-lavender-600 uppercase">BIOMECHANICS SIMULATOR</span>
+                        <h2 class="text-xl md:text-2xl font-black text-slatePurple">慢動作物理與障礙軌跡模擬器</h2>
+                    </div>
+                    <span class="text-xs font-bold text-slatePurple/60">調整參數觀察骨架小人質心拋物線與力向量</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                    
+                    <!-- Sliders Column (5 cols) -->
+                    <div class="md:col-span-5 space-y-4 bg-lavender-50 p-4 rounded-2xl border border-lavender-200 text-xs font-bold">
+                        <div>
+                            <div class="flex justify-between mb-1 text-slatePurple">
+                                <span>1. 助跑水平速度 (Approach Speed)</span>
+                                <span id="v-speed" class="font-pixel text-lavender-700">6.5 m/s</span>
+                            </div>
+                            <input type="range" id="s-speed" min="2" max="10" value="6.5" step="0.5" oninput="updatePhysicsSim()" class="w-full accent-lavender-500">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1 text-slatePurple">
+                                <span>2. 手部向下推力 (Push Force)</span>
+                                <span id="v-force" class="font-pixel text-lavender-700">75%</span>
+                            </div>
+                            <input type="range" id="s-force" min="20" max="100" value="75" oninput="updatePhysicsSim()" class="w-full accent-lavender-500">
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1 text-slatePurple">
+                                <span>3. 起跳髖關節角度 (Hip Launch Angle)</span>
+                                <span id="v-angle" class="font-pixel text-lavender-700">60°</span>
+                            </div>
+                            <input type="range" id="s-angle" min="20" max="80" value="60" oninput="updatePhysicsSim()" class="w-full accent-lavender-500">
+                        </div>
+
+                        <div id="aiFeedbackBox" class="p-3 bg-white rounded-xl border border-lavender-300 text-slatePurple leading-relaxed text-[11px]">
+                            💡 <b>AI 診斷回饋：</b> 雙手向下按壓牆面的推力足夠，與助跑水平動能完美契合，人體質心將順暢過頂！
+                        </div>
+                    </div>
+
+                    <!-- Simulator Canvas Column (7 cols) -->
+                    <div class="md:col-span-7 space-y-3">
+                        <div class="aspect-[16/9] w-full bg-slate-900 rounded-2xl overflow-hidden border-2 border-slatePurple relative">
+                            <canvas id="physicsCanvas" width="600" height="337" class="w-full h-full block"></canvas>
+                        </div>
+                        <button onclick="animatePhysicsSim()" class="pixel-btn w-full py-2.5 bg-lavender-500 text-white font-black text-xs rounded-xl">
+                            ▶ 播放 Slow-Motion 骨架關節動畫
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SOUND & THEME SONG PLAYER (Suno Chill Flow State) -->
+        <section id="music" class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                
+                <!-- Player Card (7 Cols) -->
+                <div class="md:col-span-7 purple-card p-6 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-pixel text-lavender-600 uppercase">SUNO AI THEME SONG</span>
+                        <span class="px-3 py-1 bg-lavender-100 text-lavender-800 rounded-full text-[11px] font-bold border border-lavender-300">
+                            PURE FOCUS (CHILL SYNTH)
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleAudioTheme()" id="musicPlayBtn" class="w-16 h-16 rounded-2xl bg-lavender-500 text-white flex items-center justify-center font-pixel text-2xl shadow-[4px_4px_0px_#2d2438] hover:bg-lavender-600 active:scale-95 transition">
+                            ▶
+                        </button>
+                        <div>
+                            <h3 class="text-lg font-black text-slatePurple">Flow State - Pure Focus</h3>
+                            <p class="text-xs text-slatePurple/70 font-semibold mt-0.5">Chill Synthwave / Lo-Fi Chiptune / Soft Arcade BGM</p>
+                        </div>
+                    </div>
+
+                    <!-- Visualizer Canvas -->
+                    <div class="h-16 w-full bg-lavender-50 rounded-xl border border-lavender-200 overflow-hidden relative">
+                        <canvas id="audioEqCanvas" width="500" height="64" class="w-full h-full block"></canvas>
+                    </div>
+
+                    <p class="text-xs text-slatePurple/80 leading-relaxed font-medium">
+                        這首專為平台客製的輕音樂主題曲，節奏穩定、打擊感柔和，不會有尷尬的人聲幹擾，非常適合在練習物理動作拆解與街機過關時當作 Background Music！
+                    </p>
+                </div>
+
+                <!-- Suno Prompt Column (5 Cols) -->
+                <div class="md:col-span-5 purple-card p-6 space-y-4 text-xs">
+                    <h4 class="font-bold text-slatePurple text-sm flex items-center gap-2">
+                        <span>🎛️</span> Suno AI 設定參數一鍵複製
+                    </h4>
+
+                    <div class="space-y-2">
+                        <span class="text-slatePurple/70 block font-bold">Style of Music (風格提示詞):</span>
+                        <div class="p-3 bg-lavender-50 rounded-xl border border-lavender-200 font-mono text-[11px] text-lavender-800 leading-relaxed">
+                            chill synthwave, smooth retrowave, lo-fi chiptune, relaxing arcade background music, soft synth leads, steady rhythmic bass, 80s nostalgia, instrumental, smooth flow
+                        </div>
+                    </div>
+
+                    <button onclick="copySunoPrompt()" class="pixel-btn w-full py-2.5 bg-lavender-500 text-white font-black rounded-xl">
+                        📋 複製 Suno 提示詞至剪貼簿
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SHOWCASE GALLERY (可愛像素封面展示) -->
+        <section id="gallery" class="max-w-7xl mx-auto px-4">
+            <div class="text-center space-y-3 mb-10">
+                <span class="text-xs font-pixel text-lavender-600 uppercase tracking-widest">PIXEL ART COVER SHOWCASE</span>
+                <h2 class="text-2xl md:text-3xl font-black text-slatePurple">可愛像素封面展示藝廊</h2>
+                <p class="text-xs md:text-sm text-slatePurple/70 max-w-lg mx-auto">
+                    為學習平台設計的亮色系與霓虹夜景像素風展示封面，完美襯托平台主題。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cover A -->
+                <div class="purple-card p-4 space-y-3 group">
+                    <div class="aspect-[16/9] w-full bg-slate-900 rounded-2xl overflow-hidden border border-lavender-300 relative">
+                        <canvas id="coverCanvas1" width="400" height="225" class="w-full h-full block group-hover:scale-105 transition duration-300"></canvas>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slatePurple">款式 A：屋頂冒險可愛小人 (Run Flow)</span>
+                        <span class="font-pixel text-lavender-600">BRIGHT COVER</span>
+                    </div>
+                </div>
+
+                <!-- Cover B -->
+                <div class="purple-card p-4 space-y-3 group">
+                    <div class="aspect-[16/9] w-full bg-slate-900 rounded-2xl overflow-hidden border border-lavender-300 relative">
+                        <canvas id="coverCanvas2" width="400" height="225" class="w-full h-full block group-hover:scale-105 transition duration-300"></canvas>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold text-slatePurple">款式 B：霓虹賽博極速 (Flow State)</span>
+                        <span class="font-pixel text-pink-600">NEON COVER</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-lavender-300 py-12 px-4 text-xs text-slatePurple/70">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 bg-lavender-500 text-white rounded-lg flex items-center justify-center font-pixel text-sm font-bold">
+                        🏃
+                    </div>
+                    <span class="font-pixel text-slatePurple font-bold text-sm">Flow State Studio</span>
+                </div>
+                <p class="leading-relaxed">
+                    專為跑酷愛好者設計的遊戲化學習與展示平台。克服障礙、理解力學、掌握流暢！
+                </p>
+            </div>
+
+            <div class="space-y-2">
+                <span class="font-bold text-slatePurple block">快速連結 Menu</span>
+                <ul class="space-y-1">
+                    <li><a href="#journey" class="hover:text-accentPurple">📍 開發與學習歷程</a></li>
+                    <li><a href="#hero" class="hover:text-accentPurple">🎮 2D 跑酷街機遊戲</a></li>
+                    <li><a href="#physics" class="hover:text-accentPurple">🔬 慢動作物理實驗室</a></li>
+                    <li><a href="#music" class="hover:text-accentPurple">🎵 Chill Flow 原聲帶</a></li>
+                </ul>
+            </div>
+
+            <div class="space-y-3">
+                <span class="font-bold text-slatePurple block">分享與作品展示</span>
+                <button onclick="shareShowcaseLink()" class="pixel-btn px-4 py-2 bg-lavender-100 hover:bg-lavender-200 text-slatePurple border-lavender-400 rounded-xl font-bold w-full text-left">
+                    🔗 複製展示網址 (Share Showcase)
+                </button>
+                <p class="text-[11px] text-slatePurple/50">© 2026 Flow State Parkour Studio. Bright Gray-Purple Theme.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        /* 1. TOAST NOTIFICATION SYSTEM */
+        function showToast(msg, icon = '✨') {
+            const toast = document.getElementById('toast-notify');
+            document.getElementById('toast-msg').innerText = msg;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2500);
+        }
+
+        /* 2. 5-STAGE LEVEL DEFINITIONS & GAME ENGINE */
+        const STAGES = [
+            {
+                id: 1,
+                title: 'STAGE 01: 屋頂初體驗',
+                shortTitle: '屋頂初體驗',
+                desc: '低欄翻越與基礎跳躍，速度較慢，適合練習翻越與落地時機。',
+                bg: 'sunset',
+                speed: 4.5,
+                drone: false,
+                targetScore: 500,
+                stars: 3,
+                obsTypes: ['low_wall', 'gap']
+            },
+            {
+                id: 2,
+                title: 'STAGE 02: 霓虹暗巷過障',
+                shortTitle: '霓虹暗巷過障',
+                desc: '中型磚牆與障礙連鎖，考驗連續 [S] 翻越與 [A] 滾翻銜接。',
+                bg: 'neon',
+                speed: 5.8,
+                drone: false,
+                targetScore: 1000,
+                stars: 2,
+                obsTypes: ['low_wall', 'high_wall', 'slide_bar']
+            },
+            {
+                id: 3,
+                title: 'STAGE 03: 工業高空降落',
+                shortTitle: '工業高空降落',
+                desc: '深溝與高空台階，注重精準跳躍 [D] 與高落差落地 Safe Roll [A]。',
+                bg: 'industrial',
+                speed: 6.8,
+                drone: false,
+                targetScore: 1800,
+                stars: 1,
+                obsTypes: ['gap', 'high_wall', 'drop']
+            },
+            {
+                id: 4,
+                title: 'STAGE 04: 雨夜速流衝刺',
+                shortTitle: '雨夜速流衝刺',
+                desc: '動態雨景與無人機極速追擊！密集障礙，鍛鍊流暢度連擊。',
+                bg: 'rain',
+                speed: 7.8,
+                drone: true,
+                targetScore: 2500,
+                stars: 0,
+                obsTypes: ['low_wall', 'high_wall', 'gap', 'slide_bar']
+            },
+            {
+                id: 5,
+                title: 'STAGE 05: 流暢大師考驗',
+                shortTitle: '流暢大師考驗',
+                desc: '終極綜合賽道！所有障礙混合出現，結合特技 [E] 觸發 Bullet Time。',
+                bg: 'sanctuary',
+                speed: 8.8,
+                drone: true,
+                targetScore: 4000,
+                stars: 0,
+                obsTypes: ['low_wall', 'high_wall', 'gap', 'slide_bar', 'drop']
+            }
+        ];
+
+        let currentStageId = 1;
+        let gameRunning = false;
+        let score = 0;
+        let combo = 0;
+        let bulletTime = 1.0;
+        let bulletTimer = 0;
+
+        let drone = { x: -80, y: 160, dist: 350 };
+        let rainDrops = [];
+
+        // Initialize Rain Particles
+        for (let i = 0; i < 40; i++) {
+            rainDrops.push({
+                x: Math.random() * 800,
+                y: Math.random() * 400,
+                len: 12 + Math.random() * 12,
+                speed: 9 + Math.random() * 5
+            });
+        }
+
+        const arcadeCanvas = document.getElementById('arcadeCanvas');
+        const arcadeCtx = arcadeCanvas.getContext('2d');
+
+        let player = {
+            x: 80, y: 280, width: 28, height: 44,
+            vy: 0, isGrounded: true, action: 'RUN', rotation: 0
+        };
+
+        let obstacles = [];
+
+        function selectStage(stageId) {
+            currentStageId = stageId;
+            const stage = STAGES.find(s => s.id === stageId) || STAGES[0];
+
+            // Update Level Select UI Button States
+            for (let i = 1; i <= 5; i++) {
+                const btn = document.getElementById(`stage-card-${i}`);
+                if (btn) {
+                    if (i === stageId) {
+                        btn.className = "pixel-btn p-3 bg-lavender-500 text-white text-left rounded-xl border-2 border-slatePurple shadow-md active transition";
+                    } else {
+                        btn.className = "pixel-btn p-3 bg-white text-left rounded-xl border-2 border-lavender-300 shadow-sm transition hover:scale-[1.02]";
+                    }
+                }
+            }
+
+            // Update Start Overlay & HUD
+            document.getElementById('arcadeStageTitle').innerText = stage.title;
+            document.getElementById('overlayStageTitle').innerText = stage.title;
+            document.getElementById('overlayStageDesc').innerText = stage.desc;
+            document.getElementById('arcadeGoal').innerText = stage.targetScore;
+
+            // Reset Overlays
+            document.getElementById('arcadeStartOverlay').classList.remove('hidden');
+            document.getElementById('arcadeVictoryOverlay').classList.add('hidden');
+            document.getElementById('arcadeGameOverOverlay').classList.add('hidden');
+
+            gameRunning = false;
+            showToast(`已切換至關卡：${stage.shortTitle}`, '🗺️');
+        }
+
+        function startArcadeGame() {
+            document.getElementById('arcadeStartOverlay').classList.add('hidden');
+            document.getElementById('arcadeVictoryOverlay').classList.add('hidden');
+            document.getElementById('arcadeGameOverOverlay').classList.add('hidden');
+
+            const stage = STAGES.find(s => s.id === currentStageId) || STAGES[0];
+
+            gameRunning = true;
+            score = 0;
+            combo = 0;
+            player.y = 280;
+            player.vy = 0;
+            player.action = 'RUN';
+            player.rotation = 0;
+
+            drone = { x: -80, y: 160, dist: 350 };
+
+            // Toggle Drone Alert Overlay
+            const droneOverlay = document.getElementById('droneWarningOverlay');
+            if (stage.drone) {
+                droneOverlay.classList.remove('hidden');
+                droneOverlay.classList.add('flex');
+            } else {
+                droneOverlay.classList.add('hidden');
+                droneOverlay.classList.remove('flex');
+            }
+
+            // Generate Obstacles according to stage types
+            obstacles = [];
+            let startX = 500;
+            for (let i = 0; i < 20; i++) {
+                const type = stage.obsTypes[Math.floor(Math.random() * stage.obsTypes.length)];
+                obstacles.push({ x: startX, type, cleared: false });
+                startX += 280 + Math.random() * 200;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function nextStage() {
+            if (currentStageId < 5) {
+                selectStage(currentStageId + 1);
+                startArcadeGame();
+            } else {
+                selectStage(1);
+            }
+        }
+
+        function triggerGameAction(act) {
+            if (!gameRunning) return;
+            if (act === 'JUMP' && player.isGrounded) {
+                player.vy = -12;
+                player.isGrounded = false;
+                player.action = 'JUMP';
+                playSfx(440);
+            } else if (act === 'VAULT') {
+                player.vy = -6;
+                player.action = 'VAULT';
+                playSfx(520);
+            } else if (act === 'ROLL') {
+                player.action = 'ROLL';
+                playSfx(320);
+            } else if (act === 'TRICK') {
+                player.vy = -10;
+                player.isGrounded = false;
+                player.action = 'TRICK';
+                playSfx(680);
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') triggerGameAction('ROLL');
+            if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') triggerGameAction('VAULT');
+            if (e.key === 'd' || e.key === 'D' || e.key === ' ') triggerGameAction('JUMP');
+            if (e.key === 'e' || e.key === 'E') triggerGameAction('TRICK');
+        });
+
+        function triggerStumble(obstacleType) {
+            gameRunning = false;
+            playSfx(180);
+
+            let title = "過牆卡頓停頓！";
+            let feedback = "翻越牆面時按鍵時機過晚。建議練習在靠近障礙物時按下 [S] 鍵將手掌平推牆面帶動軀幹向上拋。";
+
+            if (obstacleType === 'gap') {
+                title = "深溝落地失誤！";
+                feedback = "跳躍時機不精準，建議配合 [D] 鍵抓準踏空前一刻向前上方起跳。";
+            } else if (obstacleType === 'slide_bar') {
+                title = "頭部擊中橫桿！";
+                feedback = "地面低桿需要迅速按下 [A] 進行低姿勢滾翻過障。";
+            } else if (obstacleType === 'drone') {
+                title = "被追擊無人機接近！";
+                feedback = "障礙反應猶豫導致速度下降，被後方無人機拉近距離。連續完成過障即能拉開距離！";
+            }
+
+            document.getElementById('stumbleTitle').innerText = title;
+            document.getElementById('stumbleFeedback').innerText = feedback;
+            document.getElementById('arcadeGameOverOverlay').classList.remove('hidden');
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            const stage = STAGES.find(s => s.id === currentStageId) || STAGES[0];
+
+            if (bulletTimer > 0) {
+                bulletTimer--;
+                bulletTime = 0.4;
+            } else {
+                bulletTime = 1.0;
+                document.getElementById('bulletTimeBadge').classList.add('hidden');
+            }
+
+            const dt = bulletTime;
+            const currentSpeed = stage.speed * dt;
+
+            player.vy += 0.7 * dt;
+            player.y += player.vy * dt;
+
+            if (player.y >= 280) {
+                player.y = 280;
+                player.vy = 0;
+                player.isGrounded = true;
+                player.rotation = 0;
+                if (player.action !== 'ROLL') player.action = 'RUN';
+            }
+
+            if (player.action === 'VAULT' || player.action === 'TRICK') {
+                player.rotation += 0.25 * dt;
+            }
+
+            // Drone AI Logic
+            if (stage.drone) {
+                const targetX = player.x - drone.dist;
+                drone.x += (targetX - drone.x) * 0.05;
+                drone.y = 150 + Math.sin(Date.now() * 0.005) * 12;
+
+                if (combo === 0) {
+                    drone.dist = Math.max(50, drone.dist - 0.3 * dt);
+                } else {
+                    drone.dist = Math.min(320, drone.dist + 0.6 * dt);
+                }
+
+                document.getElementById('droneDistText').innerText = `${Math.floor(drone.dist / 10)}m`;
+
+                if (drone.dist <= 60) {
+                    triggerStumble('drone');
+                    return;
+                }
+            }
+
+            // Move Obstacles & Collision Check
+            obstacles.forEach(obs => {
+                obs.x -= currentSpeed;
+
+                if (obs.x > player.x - 20 && obs.x < player.x + 30) {
+                    let success = false;
+                    if (obs.type === 'low_wall' && (player.action === 'VAULT' || player.action === 'TRICK')) success = true;
+                    else if (obs.type === 'high_wall' && (player.action === 'VAULT' || player.action === 'JUMP' || player.action === 'TRICK')) success = true;
+                    else if (obs.type === 'gap' && (!player.isGrounded || player.action === 'TRICK')) success = true;
+                    else if (obs.type === 'slide_bar' && (player.action === 'ROLL' || player.action === 'TRICK')) success = true;
+                    else if (obs.type === 'drop' && player.action === 'ROLL') success = true;
+
+                    if (success && !obs.cleared) {
+                        obs.cleared = true;
+                        combo++;
+                        score += 100 * combo;
+                        if (combo % 3 === 0) {
+                            bulletTimer = 25;
+                            document.getElementById('bulletTimeBadge').classList.remove('hidden');
+                        }
+                        playSfx(500 + combo * 30);
+                    } else if (!success && !obs.cleared) {
+                        triggerStumble(obs.type);
+                        return;
+                    }
+                }
+            });
+
+            // Respawn Obstacles
+            if (obstacles[0] && obstacles[0].x < -50) {
+                obstacles.shift();
+                const type = stage.obsTypes[Math.floor(Math.random() * stage.obsTypes.length)];
+                obstacles.push({
+                    x: obstacles[obstacles.length - 1].x + 280 + Math.random() * 180,
+                    type,
+                    cleared: false
+                });
+            }
+
+            score += 0.2 * dt;
+            document.getElementById('arcadeScore').innerText = Math.floor(score);
+            document.getElementById('arcadeCombo').innerText = `${combo}x`;
+
+            // Stage Clear Condition Check
+            if (score >= stage.targetScore) {
+                gameRunning = false;
+                stage.stars = 3; // Mark cleared
+                document.getElementById(`stars-${stage.id}`).innerText = "⭐⭐⭐";
+                document.getElementById('victoryStageText').innerText = `已成功通關 ${stage.shortTitle}！`;
+                document.getElementById('arcadeVictoryOverlay').classList.remove('hidden');
+                showToast(`🏆 恭喜破關 ${stage.shortTitle}！`, '⭐');
+                return;
+            }
+
+            // Canvas Rendering with Level Weather & Themes
+            arcadeCtx.clearRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+
+            // Dynamic Background based on Stage BG
+            if (stage.bg === 'sunset') {
+                const skyGrad = arcadeCtx.createLinearGradient(0, 0, 0, 400);
+                skyGrad.addColorStop(0, '#fce7f3');
+                skyGrad.addColorStop(0.6, '#e8e0f0');
+                skyGrad.addColorStop(1, '#8d72b8');
+                arcadeCtx.fillStyle = skyGrad;
+                arcadeCtx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+            } else if (stage.bg === 'neon') {
+                arcadeCtx.fillStyle = '#1e1b4b';
+                arcadeCtx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+            } else if (stage.bg === 'industrial') {
+                arcadeCtx.fillStyle = '#1e293b';
+                arcadeCtx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+            } else if (stage.bg === 'rain') {
+                arcadeCtx.fillStyle = '#0f172a';
+                arcadeCtx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+
+                // Draw Raindrops
+                arcadeCtx.strokeStyle = 'rgba(184, 166, 212, 0.4)';
+                arcadeCtx.lineWidth = 1.5;
+                arcadeCtx.beginPath();
+                rainDrops.forEach(r => {
+                    r.y += r.speed;
+                    if (r.y > 400) r.y = 0;
+                    arcadeCtx.moveTo(r.x, r.y);
+                    arcadeCtx.lineTo(r.x - 3, r.y + r.len);
+                });
+                arcadeCtx.stroke();
+            } else {
+                // Sanctuary
+                const skyGrad = arcadeCtx.createLinearGradient(0, 0, 0, 400);
+                skyGrad.addColorStop(0, '#312e81');
+                skyGrad.addColorStop(1, '#090d16');
+                arcadeCtx.fillStyle = skyGrad;
+                arcadeCtx.fillRect(0, 0, arcadeCanvas.width, arcadeCanvas.height);
+            }
+
+            // Ground
+            arcadeCtx.fillStyle = '#2d2438';
+            arcadeCtx.fillRect(0, 324, arcadeCanvas.width, 76);
+            arcadeCtx.fillStyle = '#8d72b8';
+            arcadeCtx.fillRect(0, 324, arcadeCanvas.width, 4);
+
+            // Render Obstacles
+            obstacles.forEach(obs => {
+                if (obs.type === 'low_wall') {
+                    arcadeCtx.fillStyle = '#a084ca';
+                    arcadeCtx.fillRect(obs.x, 280, 24, 44);
+                } else if (obs.type === 'high_wall') {
+                    arcadeCtx.fillStyle = '#7558a3';
+                    arcadeCtx.fillRect(obs.x, 240, 30, 84);
+                } else if (obs.type === 'gap') {
+                    arcadeCtx.fillStyle = '#090d16';
+                    arcadeCtx.fillRect(obs.x, 324, 60, 76);
+                } else if (obs.type === 'slide_bar') {
+                    arcadeCtx.fillStyle = '#e879f9';
+                    arcadeCtx.fillRect(obs.x, 230, 70, 10);
+                    arcadeCtx.fillRect(obs.x + 8, 240, 8, 84);
+                    arcadeCtx.fillRect(obs.x + 54, 240, 8, 84);
+                } else if (obs.type === 'drop') {
+                    arcadeCtx.fillStyle = '#f43f5e';
+                    arcadeCtx.fillRect(obs.x, 290, 40, 34);
+                }
+            });
+
+            // Drone Render
+            if (stage.drone) {
+                arcadeCtx.strokeStyle = 'rgba(244, 63, 94, 0.7)';
+                arcadeCtx.lineWidth = 2;
+                arcadeCtx.beginPath();
+                arcadeCtx.moveTo(drone.x + 18, drone.y + 12);
+                arcadeCtx.lineTo(player.x + 14, player.y + 22);
+                arcadeCtx.stroke();
+
+                arcadeCtx.fillStyle = '#1e293b';
+                arcadeCtx.fillRect(drone.x, drone.y, 36, 16);
+                arcadeCtx.fillStyle = '#f43f5e';
+                arcadeCtx.beginPath();
+                arcadeCtx.arc(drone.x + 18, drone.y + 8, 5, 0, Math.PI * 2);
+                arcadeCtx.fill();
+            }
+
+            // Player Sprite
+            arcadeCtx.save();
+            arcadeCtx.translate(player.x + 14, player.y + 22);
+            arcadeCtx.rotate(player.rotation);
+            arcadeCtx.fillStyle = player.action === 'TRICK' ? '#f43f5e' : '#8d72b8';
+            arcadeCtx.fillRect(-14, -22, player.width, player.height);
+            arcadeCtx.restore();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        /* 3. PHYSICS LAB SIMULATOR */
+        function updatePhysicsSim() {
+            const speed = document.getElementById('s-speed').value;
+            const force = document.getElementById('s-force').value;
+            const angle = document.getElementById('s-angle').value;
+
+            document.getElementById('v-speed').innerText = `${speed} m/s`;
+            document.getElementById('v-force').innerText = `${force}%`;
+            document.getElementById('v-angle').innerText = `${angle}°`;
+
+            const physCanvas = document.getElementById('physicsCanvas');
+            const pCtx = physCanvas.getContext('2d');
+            pCtx.clearRect(0, 0, physCanvas.width, physCanvas.height);
+
+            // Background
+            pCtx.fillStyle = '#111827';
+            pCtx.fillRect(0, 0, physCanvas.width, physCanvas.height);
+
+            // Ground Line
+            pCtx.fillStyle = '#8d72b8';
+            pCtx.fillRect(0, 280, physCanvas.width, 4);
+
+            // Obstacle Barrier
+            pCtx.fillStyle = '#8d72b8';
+            pCtx.fillRect(290, 170, 30, 110);
+
+            // Trajectory Arc
+            pCtx.beginPath();
+            const peakY = 280 - (force * 1.2) - (angle * 0.5);
+            pCtx.strokeStyle = (force > 50 && angle > 40) ? '#34d399' : '#f87171';
+            pCtx.lineWidth = 3;
+            pCtx.setLineDash([5, 5]);
+            pCtx.moveTo(100, 280);
+            pCtx.quadraticCurveTo(280, peakY, 460, 280);
+            pCtx.stroke();
+            pCtx.setLineDash([]);
+
+            // Stickman
+            pCtx.fillStyle = '#a084ca';
+            pCtx.beginPath();
+            pCtx.arc(285, peakY + 10, 10, 0, Math.PI * 2);
+            pCtx.fill();
+        }
+
+        function animatePhysicsSim() {
+            let t = 0;
+            const interval = setInterval(() => {
+                t += 0.1;
+                updatePhysicsSim();
+                if (t >= 1) clearInterval(interval);
+            }, 40);
+        }
+
+        /* 4. WEB AUDIO SYNTH & BGM */
+        let audioCtx = null;
+        let isAudioPlaying = false;
+        let synthInterval = null;
+
+        function toggleAudioTheme() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            isAudioPlaying = !isAudioPlaying;
+
+            const btn = document.getElementById('musicPlayBtn');
+            btn.innerText = isAudioPlaying ? '⏸' : '▶';
+
+            if (isAudioPlaying) {
+                playChillSynthBGM();
+                animateAudioEq();
+                showToast('正在播放 Suno Chill Flow State 輕音樂...', '🎵');
+            } else {
+                if (synthInterval) clearInterval(synthInterval);
+            }
+        }
+
+        function playSfx(freq) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch(e) {}
+        }
+
+        function playChillSynthBGM() {
+            const notes = [220, 261, 329, 392, 440, 329, 261];
+            let step = 0;
+            synthInterval = setInterval(() => {
+                if (!isAudioPlaying) return;
+                playSfx(notes[step % notes.length]);
+                step++;
+            }, 320);
+        }
+
+        function animateAudioEq() {
+            const eqCanvas = document.getElementById('audioEqCanvas');
+            const eqCtx = eqCanvas.getContext('2d');
+            function drawEq() {
+                if (!isAudioPlaying) {
+                    eqCtx.clearRect(0, 0, eqCanvas.width, eqCanvas.height);
+                    return;
+                }
+                eqCtx.clearRect(0, 0, eqCanvas.width, eqCanvas.height);
+                for (let i = 0; i < 30; i++) {
+                    const h = Math.random() * 48 + 8;
+                    eqCtx.fillStyle = '#8d72b8';
+                    eqCtx.fillRect(i * 16 + 8, 64 - h, 10, h);
+                }
+                setTimeout(() => requestAnimationFrame(drawEq), 100);
+            }
+            drawEq();
+        }
+
+        function copySunoPrompt() {
+            const prompt = "chill synthwave, smooth retrowave, lo-fi chiptune, relaxing arcade background music, soft synth leads, steady rhythmic bass, 80s nostalgia, instrumental, smooth flow";
+            const el = document.createElement('textarea');
+            el.value = prompt;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast('Suno 提示詞已複製到剪貼簿！', '📋');
+        }
+
+        /* 5. CANVAS GALLERY COVERS */
+        function renderGalleryCovers() {
+            // Cover A
+            const c1 = document.getElementById('coverCanvas1');
+            const ctx1 = c1.getContext('2d');
+            ctx1.fillStyle = '#f4f0f8'; ctx1.fillRect(0,0,400,225);
+            ctx1.fillStyle = '#8d72b8'; ctx1.font = 'bold 16px Silkscreen'; ctx1.fillText('RUN FLOW: PARKOUR', 20, 40);
+            ctx1.fillStyle = '#2d2438'; ctx1.fillRect(40, 160, 320, 65);
+
+            // Cover B
+            const c2 = document.getElementById('coverCanvas2');
+            const ctx2 = c2.getContext('2d');
+            ctx2.fillStyle = '#090d16'; ctx2.fillRect(0,0,400,225);
+            ctx2.fillStyle = '#a084ca'; ctx2.font = 'bold 16px Silkscreen'; ctx2.fillText('FLOW STATE STUDIO', 20, 40);
+            ctx2.fillStyle = '#ff007f'; ctx2.fillRect(160, 100, 30, 80);
+        }
+
+        function shareShowcaseLink() {
+            showToast('已複製灰紫色系展演網站連結！', '🔗');
+        }
+
+        /* INITIALIZATION ON WINDOW LOAD */
+        window.onload = function() {
+            selectStage(1);
+            updatePhysicsSim();
+            renderGalleryCovers();
+        };
+    </script>
+</body>
+</html>
